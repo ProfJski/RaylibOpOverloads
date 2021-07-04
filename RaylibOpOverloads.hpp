@@ -19,7 +19,7 @@
 //
 // These operator overloads are convenience functions of two kinds:
 // (1) Arithmetic operator overloads for use on vectors, colors and matricies, etc.  These permit more natural and expressive syntax in C++.
-// For example, one can write VectorA=Vector2Subtract(Vector2Scale(VectorB,2),Vector2Add(VectorC,VectorD)) as VectorA=2*VectorB-(VectorA+VectorD).
+// For example, one can write VectorA=Vector2Subtract(Vector2Scale(VectorB,2.0),Vector2Add(VectorC,VectorD)) as VectorA=2.0*VectorB-(VectorA+VectorD).
 // (2) Output stream operator overloads to facilitate printing values to cout or filestreams.
 //
 // --------------------------------------------------------------
@@ -34,7 +34,7 @@
 // (B) Equality Operator
 //
 // Operator== determines whether Vector A equals Vector B.  The evaluation is straightforward with integer types, but not with floats.
-// Three options are provided.
+// Three options are provided for the floating point types Vector2 and Vector3
 //
 // EQUALITY_OPERATOR_SIMPLE: Evaluates VectorA==VectorB as true IFF a.x==b.x and a.y==b.y, etc.  The overload merely invokes how operator== is defined for floats in one's C++ implementation.
 // EQUALITY_OPERATOR_KNUTH: Uses C++ machine epsilon from std::numeric_limits to establish inequality if two quantities are close enough to be considered equal given the machine's precision and the magnitude of the floats.  From https://stackoverflow.com/a/253874, which in turn cites Knuth
@@ -42,8 +42,8 @@
 //
 // To see the difference between _SIMPLE and _KNUTH, try this test: Vector3 v1={1.0,1.5,2.0}; v2=v1; v2*=sqrt(2.0); v2/=sqrt(2.0); Does v1==v2 ?  With _SIMPLE no; with _KNUTH, yes.
 
-//#define PRINT_VECTORS_WITH_PARENTHESES
-#define PRINT_VECTORS_BY_COMPONENT
+#define PRINT_VECTORS_WITH_PARENTHESES
+//#define PRINT_VECTORS_BY_COMPONENT
 
 //#define EQUALITY_OPERATOR_SIMPLE
 #define EQUALITY_OPERATOR_KNUTH
@@ -283,7 +283,59 @@ Vector3& operator/=(Vector3& a, const float b) {
 return a;
 }
 
-//Equality operator overloads
+//I'm not sure if the following is useful either, but here it is for completeness
+Color operator/(const Color& a, const Color& b) {
+    float red,green,blue,alpha;
+    Color c;
+    red=(float)a.r/(float)b.r;
+    green=(float)a.g/(float)b.g;
+    blue=(float)a.b/(float)b.b;
+    alpha=(float)a.a/(float)b.a;
+
+    c.r=(unsigned char)( ( (red>255)?255:(red<0)?0:red) ); //Nested ternary clamps return between 0 and 255
+    c.g=(unsigned char)( ( (green>255)?255:(green<0)?0:green) );
+    c.b=(unsigned char)( ( (blue>255)?255:(blue<0)?0:blue) );
+    c.r=(unsigned char)( ( (alpha>255)?255:(alpha<0)?0:alpha) );
+return c;
+}
+
+Color& operator/=(Color&a, const Color& b) {
+    a=a/b;
+return a;
+}
+
+Color operator/(const Color& a, const float b) {
+    float red,green,blue,alpha;  //We cast to float, clamp, then recast back to unsigned char
+    Color c;
+    red=(float)a.r/b;
+    green=(float)a.g/b;
+    blue=(float)a.b/b;
+    alpha=(float)a.a/b;
+
+    c.r=(unsigned char)( ( (red>255)?255:(red<0)?0:red) ); //Nested ternary clamps return between 0 and 255
+    c.g=(unsigned char)( ( (green>255)?255:(green<0)?0:green) );
+    c.b=(unsigned char)( ( (blue>255)?255:(blue<0)?0:blue) );
+    c.r=(unsigned char)( ( (alpha>255)?255:(alpha<0)?0:alpha) );
+return c;
+}
+
+Color& operator/=(Color&a, const float b) {
+    a=a/b;
+return a;
+}
+
+
+// Equality operator overloads
+//
+// Integer equality
+bool operator==(const Color& c1, const Color& c2) {
+    if ( (c1.r==c2.r) && (c1.g==c2.g) && (c1.b==c2.b) && (c1.a==c2.a) ) return true;
+return false;
+}
+
+// Float equality for Vector2 and Vector3
+//
+//Comparing float values requires care.  Choose EQUALITY_OPERATOR_SIMPLE, EQUALITY_OPERATOR_KNUTH, or neither in the #defines at the top of the file
 #ifdef EQUALITY_OPERATOR_SIMPLE
 bool operator==(const Vector2& a, const Vector2& b) {
     if ( (a.x==b.x) && (a.y==b.y)) return true;
