@@ -88,7 +88,7 @@ Maybe, if it's an operator overload and I know how to do it.
 
 *Why did you use references in most cases?*
 
-To avoid the overhead of passing by value and copying if these operations are used frequently in a loop.  References are not used for the left hand side of operators with assignment ( `+=` `-=` `*=` `/=` ) because the left-hand-side is modified and then returned for operator chaining, which seems to be best practice, if I understand it correctly.
+To avoid the overhead of passing by value and copying if these operations are used frequently in a loop.  Const references are not used for the left hand side of operators with assignment ( `+=` `-=` `*=` `/=` ) because the left-hand-side is modified and then returned for operator chaining, which seems to be best practice, if I understand it correctly.
 Of course, there's still overhead when the RayLib functions themselves are invoked, because the arguments are passed by value, but I have no control over that.
 
 
