@@ -25,7 +25,7 @@ The output stream overloads permit easy printing of most `struct` variables to a
 Presto!  All the data about your camera will be printed: its position, target, up vector, projection type, FOV and camera matrix.  Great for debugging, logging, etc.
 
 ### What it isn't
-If you are looking for a C++ wrapper, there are projects such as [https://github.com/RobLoach/raylib-cpp](raylib-cpp).  No new methods or objects are introduced in my header, merely operator overloads, many of which call RayLib functions.
+If you are looking for a C++ wrapper, there are projects such as [Rob Loach's raylib-cpp at https://github.com/RobLoach/raylib-cpp](https://github.com/RobLoach/raylib-cpp).  No new methods or objects are introduced in my header, merely operator overloads, many of which call RayLib functions.
 
 ## List of Overloads
 ### Arithmetic operators:
